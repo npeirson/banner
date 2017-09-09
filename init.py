@@ -36,7 +36,7 @@ def startGPS():
     if isinstance(latitude, float) == True:
             print('Signal acquired!')
             subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
-            subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
+            #subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
             subprocess.call(['python', '/home/pi/Desktop/Bruce/mainLogging.py'])         
                 
 startGPS()                
