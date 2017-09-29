@@ -7,6 +7,7 @@
 
 ################################################################################################
 
+# Depending on the application, not all of these will be necessary
 # Pin number on the RPi pinout diagram is different from the GPIO port number
 
 def balloonPin():
@@ -18,7 +19,11 @@ def ballastPin():
     return value
 
 def loiterAlt():
-    value = 12192 # 12,192 m = 40,000 ft
+    value = 15000 # 15,000 m = 49,212.6 ft
+    return value
+
+def killAlt():
+    value = 15000 # 15,000 m = 49,212.6 ft
     return value
 
 def loiterTime():
@@ -37,5 +42,14 @@ def tempSensorLedPin():
     value = 23 # GPIO pin for LED to indicate thermocouple value in range
     return value
 
-	def logFreq():
+def logFreq():
 	value = 5 # time between taking data points (seconds)
+	return value
+
+def cookTime():
+	value = 4 # coil on for 3 seconds, recommend overshooting this a little since waiting until fall detected is more ideal
+	return value
+
+def timeout(): # kill flight after this many seconds
+    value = 3000  # 3000 seconds = 50 minutes
+    return value
