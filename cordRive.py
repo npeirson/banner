@@ -32,7 +32,6 @@ print('- Stopwatch has begun') # terminal feedback
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(bannerSettings.balloonPin(), GPIO.OUT)
-GPIO.setup(bannerSettings.tempSensorLedPin(), GPIO.OUT)
 print('- Altitude listener running\n\n--==[ READY FOR LAUNCH ]==--\n') # terminal feedback
 
 # logging function for control system actions
