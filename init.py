@@ -1,3 +1,4 @@
+"""
 ################################################################################################
 
 ## Project Banner: System Initialization
@@ -9,35 +10,38 @@
 ## Altitude control and sensor logging run on separate threads to maximize efficiency.
 
 ################################################################################################
+"""
 
 #! /bin/sh -e
-import os
-import subprocess
-import gps
-import time
-time.sleep(4)
+#pylint: disable=no-member
 
-# Initializes GPS
-# No functions begin until GPS locks acquired
-def startGPS():
+import subprocess
+import time
+import gps
+
+time.sleep(4)
+def start_gps():
+    """
+    # Initializes GPS
+    # No functions begin until GPS locks acquired
+    """
     latitude = None
     subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
-    print('\nGPS initialized, searching for satellites...\nThis might take a while...')
+    print '\nGPS initialized, searching for satellites...\nThis might take a while...'
     time.sleep(4)
     session = gps.gps("localhost", "2947")
-    session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)   
-    while isinstance(latitude, float) == False:
+    session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+    while isinstance(latitude, float) is False:
         time.sleep(1)
         report = session.next()
         if report['class'] == 'TPV':
             if hasattr(report, 'lat'):
                 latitude = report.lat
-        print('Searching for signal...')
-    if isinstance(latitude, float) == True:
-            print('Signal acquired!')
-            subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
-            subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
-            subprocess.call(['python', '/home/pi/Desktop/Bruce/mainLogging.py'])         
-                
-startGPS()                
+        print 'Searching for signal...'
+    if isinstance(latitude, float) is True:
+        print 'Signal acquired!'
+        subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
+        subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
+        subprocess.call(['python', '/home/pi/Desktop/Bruce/mainLogging.py'])
 
+start_gps()
