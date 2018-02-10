@@ -15,7 +15,10 @@ import os
 import subprocess
 import gps
 import time
+import LEDsystem
 time.sleep(4)
+
+
 
 # Initializes GPS
 # No functions begin until GPS locks acquired
@@ -25,6 +28,7 @@ def startGPS():
     print('\nGPS initialized, searching for satellites...\nThis might take a while...')
     time.sleep(4)
     session = gps.gps("localhost", "2947")
+    LEDsystem.signalAcquired()
     session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)   
     while isinstance(latitude, float) == False:
         time.sleep(1)

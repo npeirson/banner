@@ -55,7 +55,7 @@ def releaseBalloon():
     state = 'Coil on'
     takeLog()
     while coilStatus == 1: # while the coil is cookin'...
-        if gpsPull.climbGet() <= -1 or time.time() - coilStartTime >= bannerSettings.cookTime(): # if payload is falling or maximum coil time has passed
+        if  time.time() - coilStartTime >= bannerSettings.cookTime(): # if payload is falling or maximum coil time has passed
             GPIO.output(bannerSettings.balloonPin(), GPIO.LOW) # turn coil off
             coilStatus = 2
             state = 'Coil off'
@@ -75,7 +75,7 @@ while balloonStatus == 1:
     time.sleep(0.5) # checks altitude and flight time this often (seconds)
     if gpsPull.altGet() >= bannerSettings.killAlt() and coilStatus == 0:
         reason = 'Target Altitude Achieved'
-        releaseBalloon()
+        takeLog()
     elif time.time() - initialTime >= bannerSettings.timeout() and coilStatus == 0:
         reason = 'Killed by Timeout'
         releaseBalloon()    

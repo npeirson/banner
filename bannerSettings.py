@@ -11,7 +11,7 @@
 # Pin number on the RPi pinout diagram is different from the GPIO port number
 
 def balloonPin():
-    value = 18 # pin 18, gpio 24
+    value = 11 # pin 11, gpio 17
     return value
 
 def ballastPin():
@@ -23,7 +23,7 @@ def loiterAlt():
     return value
 
 def killAlt():
-    value = 15000 # 15,000 m = 49,212.6 ft
+    value = 3048 # 3,048 m = 10,000 ft
     return value
 
 def loiterTime():
@@ -47,9 +47,9 @@ def logFreq():
 	return value
 
 def cookTime():
-	value = 4 # coil on for 3 seconds, recommend overshooting this a little since waiting until fall detected is more ideal
+	value = 16 # coil on for 3 seconds, recommend overshooting this a little since waiting until fall detected is more ideal
 	return value
 
 def timeout(): # kill flight after this many seconds
-    value = 3000  # 3000 seconds = 50 minutes
+    value = 1500  # 1500 seconds = 25 minutes
     return value
