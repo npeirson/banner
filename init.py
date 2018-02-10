@@ -28,7 +28,7 @@ def startGPS():
     print('\nGPS initialized, searching for satellites...\nThis might take a while...')
     time.sleep(4)
     session = gps.gps("localhost", "2947")
-    LEDsystem.signalAcquired()
+    start_time = time.time() + 300 # 300s = 5 min... duh
     session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)   
     while isinstance(latitude, float) == False:
         time.sleep(1)
@@ -39,10 +39,13 @@ def startGPS():
         print('Searching for signal...')
     if isinstance(latitude, float) == True:
             print('Signal acquired!')
+            LEDsystem.signalAcquired()
             subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
             #subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
             #subprocess.call(['python', '/home/pi/Desktop/Bruce/mainLogging.py'])         
             subprocess.call(['python', '/home/pi/Desktop/banner/cordRive.py'])
-                
+    elif(time.time() > start_time):
+        subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
+        subprocess.call(['python', '/home/pi/Desktop/banner/cordRive.py'])
 startGPS()                
 
