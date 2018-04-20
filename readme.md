@@ -36,13 +36,13 @@ If I'm forgetting any, you'll surely see what they are when you try to run init.
 The system is intended to operate in conjunction with a radio data transmission system. This uses a TNC-Pi board and a BaoFeng radio to communicate with a ground-station. You'll need a licensed HAM operator.
 
 ### Files and Their Functions
-altitudeControl.py	----	The loitering system, including action logging
-bannerSettings.py	----	General settings file
-gpsPull.py			----	Functions for getting specific data from GPS
-init.py				----	Main initalization. Run this to begin everything. Can be made to run on startup via /etc/rc.local or whatever
-ledSystem.py		----	Super shitty LED signalling functions. Please improve these with loops... please...
-mainLogging.py		----	Logs all sensor data
-ptAltitude.py		----	Collects pressure and temperature data from MPL3115A2, then extrapolates altitude based on standard atmospheric model
-readme.txt			----	This document
-thermocouple.py		----	Collects data from thermocouple via TI ADS1X15 ADC
+altitudeControl.py	----	The loitering system, including action logging\
+bannerSettings.py	----	General settings file\
+gpsPull.py		----	Functions for getting specific data from GPS\
+init.py			----	Main initalization. Run this to begin everything. Can be made to run on startup via /etc/rc.local or whatever\
+ledSystem.py		----	Super shitty LED signalling functions. Please improve these with loops... please...\
+mainLogging.py		----	Logs all sensor data\
+ptAltitude.py		----	Collects pressure and temperature data from MPL3115A2, then extrapolates altitude based on standard atmospheric model\
+readme.md		----	This document\
+thermocouple.py		----	Collects data from thermocouple via TI ADS1X15 ADC\
 folder "logs"		----	Includes example log files from both buoyancy control (loiterLog*.txt) and sensors (log*.txt)  
