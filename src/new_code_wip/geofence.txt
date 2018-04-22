@@ -1,0 +1,10 @@
+#The Geo-Fence is defined by a set of circles that the
+#device is allowed to exist within.  If it passes
+#outside of the area defined by the union of all the
+#circles, the in_geofence() function will return False
+
+4						#Number of circles used
+30.6205 -96.3259 150	#CS #Lat, Long, and a radius (in km)
+32.7782 -96.7954 200	#Dallas
+30.2676 -97.7430 200	#Austin
+32.4492 -99.7414 150	#Abilene
