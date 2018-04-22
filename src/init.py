@@ -1,5 +1,5 @@
 """
-################################################################################################
+############################################################################
 
 ## Project Banner: System Initialization
 ## Created: 07-11-2016 by Madeline McMillan and Nate Peirson
@@ -7,9 +7,9 @@
 ## High Altitude Balloon Club
 
 ## This is the main file to run to initialize ALL other processes.
-## Altitude control and sensor logging run on separate threads to maximize efficiency.
+## Altitude control & sensor logging run on separate threads for efficiency.
 
-################################################################################################
+############################################################################
 """
 
 #! /bin/sh -e
@@ -19,29 +19,27 @@ import subprocess
 import time
 import gps
 
-time.sleep(4)
-def start_gps():
-    """
-    # Initializes GPS
-    # No functions begin until GPS locks acquired
-    """
-    latitude = None
-    subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
-    print '\nGPS initialized, searching for satellites...\nThis might take a while...'
-    time.sleep(4)
-    session = gps.gps("localhost", "2947")
-    session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
-    while isinstance(latitude, float) is False:
-        time.sleep(1)
-        report = session.next()
-        if report['class'] == 'TPV':
-            if hasattr(report, 'lat'):
-                latitude = report.lat
-        print 'Searching for signal...'
-    if isinstance(latitude, float) is True:
-        print 'Signal acquired!'
-        subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
-        subprocess.call(['python', '/home/pi/Desktop/Bruce/altitudeControl.py'])
-        subprocess.call(['python', '/home/pi/Desktop/Bruce/mainLogging.py'])
+def get_gps_lock():
+	latitude = None
+	subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
+	print 'GPS initialized, searching for satellites...'
+	print 'This might take a while...'
+	time.sleep(2)
+	session = gps.gps("localhost", "2947")
+	session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+	while isinstance(latitude, float) is False:
+		time.sleep(1)
+		report = session.next()
+		if report['class'] == 'TPV':
+			if hasattr(report, 'lat'):
+				latitude = report.lat
+		print 'Searching for signal...'
+	print 'Signal acquired!'
 
-start_gps()
+
+get_gps_lock() # Make sure we are getting GPS data
+
+
+#subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)
+subprocess.call(['python', './altitudeControl.py'])
+subprocess.call(['python', './mainLogging.py'])

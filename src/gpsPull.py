@@ -7,13 +7,13 @@
 
 ## This holds the functions for pulling data from the GPS
 
-################################################################################################
+##############################################################################
 
 # ---- Functions ----
 #      Time:   timeGet()
 #  Latitude:   latGet()
 # Longitude:   lonGet()
-#  Altitude:   altGet() 
+#  Altitude:   altGet()
 # Climb/ROA:   climbGet()
 
 
@@ -31,63 +31,63 @@ session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
 
 def timeGet():
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'time'):
-                    time = report.time
-                    return time
-                break
-        except:
-               pass
+	while True:
+		try:
+			report = session.next()
+			if report['class'] == 'TPV':
+				if hasattr(report, 'time'):
+					time = report.time
+					return time
+				break
+		except:
+			pass
 
 def latGet():
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'lat'):
-                    latitude = report.lat
-                    return latitude
-                break
-        except:
-               pass
+	while True:
+		try:
+			report = session.next()
+			if report['class'] == 'TPV':
+				if hasattr(report, 'lat'):
+					latitude = report.lat
+					return latitude
+				break
+		except:
+			pass
 
 def lonGet():
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'lon'):
-                    longitude = report.lon
-                    return longitude
-                break
-        except:
-               pass
+	while True:
+		try:
+			report = session.next()
+			if report['class'] == 'TPV':
+				if hasattr(report, 'lon'):
+					longitude = report.lon
+					return longitude
+				break
+		except:
+			pass
 
 def altGet():
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'alt'):
-                    GPSaltitude = report.alt
-                    return GPSaltitude
-                break
+	while True:
+		try:
+			report = session.next()
+			if report['class'] == 'TPV':
+				if hasattr(report, 'alt'):
+					GPSaltitude = report.alt
+					return GPSaltitude
+				break
 
-        except:
-            pass
+		except:
+			pass
 
 def climbGet():
-    while True:
-        try:
-            report = session.next()
-            if report['class'] == 'TPV':
-                if hasattr(report, 'climb'):
-                    global climb
-                    climb = report.climb
-                    return climb
-                break
-        except:
-            pass
+	while True:
+		try:
+			report = session.next()
+			if report['class'] == 'TPV':
+				if hasattr(report, 'climb'):
+					global climb
+					climb = report.climb
+					return climb
+				break
+		except:
+			pass
