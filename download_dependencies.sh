@@ -1,4 +1,5 @@
 #!/bin/bash
+# I don't think this works currently
 
 if [ "$(id -u)" != "0" ]; then
 	echo "This probaby will not work without sudo"
