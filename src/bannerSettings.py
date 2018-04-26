@@ -26,7 +26,7 @@ def loiterAlt():
 	return value
 
 def loiterTime():
-	value = 600 # Loiter time before flight termination (seconds)
+	value = 15 # Loiter time before flight termination (seconds)
 	return value
 
 def deltaA():
@@ -45,11 +45,11 @@ def logFreq():
 	value = 5 # time between taking data points (seconds)
     return value
 
- def burnLimit():
+def burnLimit():
     value = 8 # max time for coil burner to be on
     return value
 
 def maxNonLoiterTime():
-    value = 2100 # 2100 seconds = 35 minutes
+    value = 30 # 2100 seconds = 35 minutes
     return value
 

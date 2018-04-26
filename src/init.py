@@ -37,7 +37,7 @@ def get_gps_lock():
 	print 'Signal acquired!'
 
 
-get_gps_lock() # Make sure we are getting GPS data
+#get_gps_lock() # Make sure we are getting GPS data
 
 
 #subprocess.call(['sudo gpsd /dev/ttyUSB0 -n -F /var/run/gpsd.sock'], shell=True)

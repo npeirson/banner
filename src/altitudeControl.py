@@ -14,7 +14,7 @@
 
 import gps
 from smbus import SMBus
-from thermocouple import readThermo
+#from thermocouple import readThermo
 import time
 import RPi.GPIO as GPIO
 import Adafruit_ADS1x15
@@ -151,11 +151,11 @@ with open(file_name, 'w') as text_file:
 # if you want to make a timeout (to prevent another Mississippi), do it here
 # set initiation altitude in bannerSetting.py
 while balloonStatus == 1:
-	time.sleep(0.01)
-	if gpsPull.altGet() >= bannerSettings.loiterAlt() and coilStatus == 0:
-		loiterStartTime = time.time()
-		loiter = True
-		releaseBalloon()
+    time.sleep(0.01)
+    if gpsPull.altGet() >= bannerSettings.loiterAlt() and coilStatus == 0:
+	loiterStartTime = time.time()
+	loiter = True
+	releaseBalloon()
     elif time.time() - startLaunchTime >= bannerSettings.maxNonLoiterTime() and coilStatus == 0:
         loiterStartTime = time.time()
         sample = True
@@ -164,19 +164,19 @@ while balloonStatus == 1:
 # experimental system to compensate for errors in buoyancy after lift balloon is jettisoned
 # math could probably be improved
 while loiter == True:
-	time.sleep(0.01)
+    time.sleep(0.01)
     sampleClimb()
     test = 1 # For testing purposes
-	if coilStatus == 2 and (time.time() - loiterStartTime) < bannerSettings.loiterTime():
-		if acceleration < 0 and gpsPull.climbGet() > 0: # Climbing but slowing
-			timeOpen = (acceleration/5)**2
-			releaseBallast(timeOpen)
-			time.sleep(timeOpen + 0.07)
+    if coilStatus == 2 and (time.time() - loiterStartTime) < bannerSettings.loiterTime():
+	if acceleration < 0 and gpsPull.climbGet() > 0: # Climbing but slowing
+	    timeOpen = (acceleration/5)**2
+	    releaseBallast(timeOpen)
+	    time.sleep(timeOpen + 0.07)
 
-		elif acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and near == 0: # 'semi perfect loiter?'
-			state = 'Velocity nearing zero...'
-			near = 1
-			takeLog()
+	elif acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and near == 0: # 'semi perfect loiter?'
+	    state = 'Velocity nearing zero...'
+	    near = 1
+	    takeLog()
 
         elif test == 1:
             releaseBallast(1)
