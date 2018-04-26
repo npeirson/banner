@@ -164,7 +164,7 @@ while balloonStatus == 1:
 # experimental system to compensate for errors in buoyancy after lift balloon is jettisoned
 # math could probably be improved
 while loiter == True:
-	time.sleep(0.01)
+    time.sleep(0.01)
     sampleClimb()
     test = 1 # For testing purposes
 	if coilStatus == 2 and (time.time() - loiterStartTime) < bannerSettings.loiterTime():
