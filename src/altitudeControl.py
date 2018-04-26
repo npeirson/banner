@@ -31,13 +31,16 @@ acceleration = 0
 state = 'Waiting...'
 near = 0
 
+startLaunchTime = time.time() # This will be used later in the timeout control
+
 # RPi IO port initialization
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(bannerSettings.balloonPin(), GPIO.OUT)
+GPIO.setup(bannerSettings.balloonLiftPin(), GPIO.OUT)
+GPIO.setup(bannerSettings.balloonEqPin(), GPIO.OUT)
 GPIO.setup(bannerSettings.ballastPin(), GPIO.OUT)
-GPIO.setup(bannerSettings.gpsLedPin(), GPIO.OUT)
-GPIO.setup(bannerSettings.tempSensorLedPin(), GPIO.OUT)
+#GPIO.setup(bannerSettings.gpsLedPin(), GPIO.OUT)
+#GPIO.setup(bannerSettings.tempSensorLedPin(), GPIO.OUT)
 
 # terminal feedback
 print('- Altitude Control Engaged')
@@ -59,8 +62,8 @@ def sampleClimb():
 	global sample
 	global acceleration
 	currentClimb = gpsPull.climbGet()
-	time.sleep(0.07)
-	acceleration = (gpsPull.climbGet() - currentClimb)/0.07
+	time.sleep(1.)
+	acceleration = (gpsPull.climbGet() - currentClimb)/1. # Positive acceleration is up
 
 # Turns release coil ON, then listens for sudden acceleration change indicating balloon release. Includes timeout.
 def releaseBalloon():
@@ -71,20 +74,20 @@ def releaseBalloon():
 	sampleClimb()
 	initialAcceleration = acceleration
 	initialTime = time.time()
-	GPIO.output(bannerSettings.balloonPin(), GPIO.HIGH)
+	GPIO.output(bannerSettings.balloonLiftPin(), GPIO.HIGH)
 	coilStatus = 1
 	state = 'Coil on'
 	takeLog()
 	while coilStatus == 1:
 		sampleClimb()
-		if abs(acceleration - initialAcceleration) >= bannerSettings.deltaA(): # acceleration change listener. Customize threshold in bannerSettings.py
-			GPIO.output(bannerSettings.balloonPin(), GPIO.LOW)
-			coilStatus = 2
-			state = 'Coil off (dA)'
-			balloonStatus = 0
-			takeLog()
-		elif time.time() - initialTime >= 2: # set your timeout here for safety
-			GPIO.output(bannerSettings.balloonPin(), GPIO.LOW)
+#        if abs(acceleration - initialAcceleration) >= bannerSettings.deltaA(): # acceleration change listener. Customize threshold in bannerSettings.py
+#            GPIO.output(bannerSettings.balloonLiftPin(), GPIO.LOW)
+#            coilStatus = 2
+#            state = 'Coil off (dA)'
+#            balloonStatus = 0
+#            takeLog()
+		if time.time() - initialTime >= bannerSettings.burnLimit(): # set your timeout here for safety
+			GPIO.output(bannerSettings.balloonLiftPin(), GPIO.LOW)
 			coilStatus = 2
 			state = 'Coil off (timeout)'
 			balloonStatus = 0
@@ -109,18 +112,33 @@ def releaseBallast(timeOpen):
 # terminate loitering
 # kills flight by dumping all remeainin ballast
 # could replace this with main balloon severance instead
+#def termLoiter():
+#    global state
+#    global valveStatus
+#    GPIO.output(bannerSettings.ballastPin(), GPIO.HIGH)
+#    valveStatus = 1
+#    state = 'Termianting Flight'
+#    takeLog()
+#    time.sleep(120)
+#    GPIO.output(bannerSettings.ballastPin(), GPIO.LOW)
+#    valveStatus = 0
+#    state = 'Flight Terminated'
+#    takeLog()
+
+# Termination by coil burner.
 def termLoiter():
-	global state
-	global valveStatus
-	GPIO.output(bannerSettings.ballastPin(), GPIO.HIGH)
-	valveStatus = 1
-	state = 'Termianting Flight'
-	takeLog()
-	time.sleep(120)
-	GPIO.output(bannerSettings.ballastPin(), GPIO.LOW)
-	valveStatus = 0
-	state = 'Flight Terminated'
-	takeLog()
+    global state
+    global valveStatus
+    global ballonStatus
+    GPIO.output(bannerSettings.balloonEQPin(), GPIO.HIGH)
+    balloonStatus = -1
+    state = 'Termianting Flight'
+    takeLog()
+    time.sleep(bannerSettings.burnLimit())
+    GPIO.output(bannerSettings.balloonEQPin(), GPIO.LOW)
+    balloonStatus = -2
+    state = 'Flight Terminated'
+    takeLog()
 
 # action log file header, tab deliniated
 with open(file_name, 'w') as text_file:
@@ -136,31 +154,44 @@ while balloonStatus == 1:
 	time.sleep(0.01)
 	if gpsPull.altGet() >= bannerSettings.loiterAlt() and coilStatus == 0:
 		loiterStartTime = time.time()
-		sample = True
+		loiter = True
 		releaseBalloon()
+    elif time.time() - startLaunchTime >= bannerSettings.maxNonLoiterTime() and coilStatus == 0:
+        loiterStartTime = time.time()
+        sample = True
+        releaseBalloon()
 
 # experimental system to compensate for errors in buoyancy after lift balloon is jettisoned
 # math could probably be improved
-while sample == True:
+while loiter == True:
 	time.sleep(0.01)
-	if coilStatus == 2:
-		if acceleration < 0 and gpsPull.climbGet() > 0:
+    sampleClimb()
+    test = 1 # For testing purposes
+	if coilStatus == 2 and (time.time() - loiterStartTime) < bannerSettings.loiterTime():
+		if acceleration < 0 and gpsPull.climbGet() > 0: # Climbing but slowing
 			timeOpen = (acceleration/5)**2
 			releaseBallast(timeOpen)
 			time.sleep(timeOpen + 0.07)
 
-		if acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and near == 0:
+		elif acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and near == 0: # 'semi perfect loiter?'
 			state = 'Velocity nearing zero...'
 			near = 1
 			takeLog()
 
-		if acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and gpsPull.climbGet() < 1:
-			sample = False
-			state = 'Loitering Achieved'
-			takeLog()
+        elif test == 1:
+            releaseBallast(1)
+            time.sleep(1)
+    elif coilStatus == 2 and (time.time() - loiterStartTime) >= bannerSettings.loiterTime():
+        termLoiter()
+        takeLog()
+
+#        if acceleration < 1 and acceleration > -1 and gpsPull.climbGet() > -1 and gpsPull.climbGet() < 1:
+#            sample = False
+#            state = 'Loitering Achieved'
+#            takeLog()
 
 		#assuming the balloon is now loitering.
 
-		if balloonStatus == 0 and time.time() - loiterStartTime >= bannerSettings.loiterTime():
-			termLoiter()
+#        if balloonStatus == 0 and time.time() - loiterStartTime >= bannerSettings.loiterTime():
+#            termLoiter()
 

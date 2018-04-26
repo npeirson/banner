@@ -9,12 +9,16 @@
 
 # Pin number on the RPi pinout diagram is different from the GPIO port number
 
-def balloonPin():
-	value = 18 # pin 18, gpio 24
+def balloonLiftPin():
+	value = 11 # pin 11, gpio 17
 	return value
 
+def balloonEQPin():
+    value = 15 # pin 15, gpio 22
+    return value
+
 def ballastPin():
-	value = 12 # pin 12, gpio 18
+	value = 7 # pin 7, gpio 4
 	return value
 
 def loiterAlt():
@@ -39,3 +43,13 @@ def tempSensorLedPin():
 
 def logFreq():
 	value = 5 # time between taking data points (seconds)
+    return value
+
+ def burnLimit():
+    value = 8 # max time for coil burner to be on
+    return value
+
+def maxNonLoiterTime():
+    value = 2100 # 2100 seconds = 35 minutes
+    return value
+
