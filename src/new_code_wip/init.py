@@ -24,22 +24,27 @@ init_coil_burner_system() # Coil-burner setup (if necessary)
 init_log_system() # Logging-system setup (if necessary)
 
 HEIGHT_LIMIT = 9999999
+TARGET_ALTITUDE = 99999
 
 def should_kill():
 	#TODO: in_geofence() in gps_control.py, get_altitude() in alt_control.py
-	if in_geofence() == False or get_altitude() > HEIGHT_LIMIT:#TODO more conditions
+	if in_geofence() == False or get_altitude() > HEIGHT_LIMIT:#TODO more conditions (time limit)
 		return True
 	else:
 		return False
 
 def kill():
 	pass #TODO: signal burn appropriate coil(s)
+	#TODO: burning coil, takes 6 seconds per coil
+
 
 while True:
+	if get_altitude() >= TARGET_ALTITUDE:
+		begin_altitude_control()#TODO:
 	if should_kill():
 		kill()
-	if has_landed():#TODO: define in altitudeControl.py
+	if has_landed():#TODO: define in alt_control.py
 		recovery_beacon() #TODO: define in led_control.py
-	if is_in_freefall(): #TODO: define in altitudeControl.py
+	if is_in_freefall(): #TODO: define in alt_control.py
 		release_parachute() #TODO: signal appropriate release system
 	thread.sleep(1)
